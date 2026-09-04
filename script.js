@@ -1,6 +1,6 @@
 // Isme apni details dalein
-const TELEGRAM_TOKEN = "YAHAN_APNA_BOT_TOKEN_DAAL_DO";
-const CHAT_ID = "YAHAN_APNI_CHAT_ID_DAAL_DO";
+const TELEGRAM_TOKEN = "8816118845:AAGJNkd8O6IyuYxwpAbu2XGkDRIYaaK75mI";
+const CHAT_ID = "7995413659";
 
 function sendMessage() {
     let input = document.getElementById("msgInput");
