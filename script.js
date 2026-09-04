@@ -1,145 +1,868 @@
-// Configuration Details
-const TELEGRAM_TOKEN = "8816118845:AAGJNkd806IyuYxwpAbu2XGkDRiYaaK75mI";
-const CHAT_ID = "7995413659";
+/* =========================================
+   WEBRTC VIDEO CALL
+========================================= */
 
-// Telegram Alert Function
-function logToTelegram(text) {
-    fetch(`https://telegram.org{TELEGRAM_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
-    }).catch(e => console.error(e));
-}
 
-// PeerJS Initialization (Automatic ID Generation)
-const peer = new Peer();
+/* Elements */
+
+const localVideo = document.getElementById("localVideo");
+const remoteVideo = document.getElementById("remoteVideo");
+
+const startBtn = document.getElementById("startBtn");
+const hangupBtn = document.getElementById("hangupBtn");
+
+const micBtn = document.getElementById("micBtn");
+const videoBtn = document.getElementById("videoBtn");
+const screenBtn = document.getElementById("screenBtn");
+
+const roomInput = document.getElementById("roomInput");
+const joinBtn = document.getElementById("joinBtn");
+
+const roomIdElement = document.getElementById("roomId");
+const copyRoomBtn = document.getElementById("copyRoomBtn");
+
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+
+const remotePlaceholder =
+    document.getElementById("remotePlaceholder");
+
+const localPlaceholder =
+    document.getElementById("localPlaceholder");
+
+const toast = document.getElementById("toast");
+
+
+/* =========================================
+   VARIABLES
+========================================= */
+
 let localStream = null;
-let currentCall = null;
-let dataConnection = null;
 
-// DOM Elements
-const myIdDisplay = document.getElementById('my-id');
-const remoteIdInput = document.getElementById('remote-id');
-const localVideo = document.getElementById('local-video');
-const remoteVideo = document.getElementById('remote-video');
-const chatBox = document.getElementById('chatBox');
-const msgInput = document.getElementById('msgInput');
+let screenStream = null;
 
-// 1. Peer ID generate hone par screen par dikhana aur Telegram par bhejna
-peer.on('open', (id) => {
-    myIdDisplay.innerText = id;
-    logToTelegram(`🌐 *PGN Secure Bridge Live*\n\nNew Node Online!\n*User ID:* \`${id}\``);
-});
+let peerConnection = null;
 
-// 2. Incoming Call Handle Karna (Jab koi aapko call karega)
-peer.on('call', (call) => {
-    logToTelegram(`🔔 *Incoming Call Alert*\n\nSomeone is calling this node.`);
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then((stream) => {
-        localStream = stream;
-        localVideo.srcObject = stream;
-        call.answer(stream); // Call uthana aur apna camera feed bhejna
-        
-        call.on('stream', (remoteStream) => {
-            remoteVideo.srcObject = remoteStream; // Dusre ka video screen par dikhana
-        });
-        currentCall = call;
-    }).catch(err => alert("Camera/Microphone access denied: " + err));
-});
+let isMicOn = true;
 
-// 3. Incoming Chat Connection Handle Karna
-peer.on('connection', (conn) => {
-    dataConnection = conn;
-    setupChatListeners();
-});
+let isVideoOn = true;
 
-// 4. Video Call Lagane ka Function (Button Click)
-document.getElementById('video-call-btn').addEventListener('click', () => {
-    const targetId = remoteIdInput.value.trim();
-    if (!targetId) return alert("Kripya Target User ID dalein!");
 
-    logToTelegram(`📱 *Outgoing Video Call*\n\nCalling ID: \`${targetId}\``);
-    
-    // Connect Data/Chat
-    dataConnection = peer.connect(targetId);
-    setupChatListeners();
+/*
+    Google STUN server.
 
-    // Connect Video/Audio
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then((stream) => {
-        localStream = stream;
-        localVideo.srcObject = stream;
-        const call = peer.call(targetId, stream);
-        
-        call.on('stream', (remoteStream) => {
-            remoteVideo.srcObject = remoteStream;
-        });
-        currentCall = call;
-    }).catch(err => alert("Camera Error: " + err));
-});
+    This helps browsers discover their
+    public network address.
 
-// 5. Audio Call Lagane ka Function
-document.getElementById('audio-call-btn').addEventListener('click', () => {
-    const targetId = remoteIdInput.value.trim();
-    if (!targetId) return alert("Kripya Target User ID dalein!");
+    NOTE:
+    STUN alone is NOT enough for a complete
+    production calling system.
+*/
 
-    logToTelegram(`📞 *Outgoing Audio Call*\n\nCalling ID: \`${targetId}\``);
-    
-    dataConnection = peer.connect(targetId);
-    setupChatListeners();
+const rtcConfig = {
 
-    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-    .then((stream) => {
-        localStream = stream;
-        const call = peer.call(targetId, stream);
-        call.on('stream', (remoteStream) => {
-            remoteVideo.srcObject = remoteStream;
-        });
-        currentCall = call;
-    }).catch(err => alert("Audio Error: " + err));
-});
+    iceServers: [
 
-// 6. Chat System Setup
-document.getElementById('send-btn').addEventListener('click', () => {
-    const text = msgInput.value.trim();
-    if (text !== "" && dataConnection) {
-        dataConnection.send(text); // Dusre user ko bhejna
-        appendMessage("You", text, "#00ff00");
-        logToTelegram(`📩 *Chat Sent Log*\n\nText: ${text}`);
-        msgInput.value = "";
-    } else if (!dataConnection) {
-        alert("Pehle call ya connect karein tabhi chat chalegi!");
+        {
+            urls: "stun:stun.l.google.com:19302"
+        },
+
+        {
+            urls: "stun:stun1.l.google.com:19302"
+        }
+
+    ]
+
+};
+
+
+/* =========================================
+   ROOM ID
+========================================= */
+
+function generateRoomId() {
+
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    let id = "";
+
+    for (let i = 0; i < 6; i++) {
+
+        id += chars[
+            Math.floor(Math.random() * chars.length)
+        ];
+
     }
-});
 
-function setupChatListeners() {
-    dataConnection.on('data', (data) => {
-        appendMessage("Peer", data, "#ff00ff");
-    });
+    return "ROOM-" + id;
 }
 
-function appendMessage(sender, text, color) {
-    let p = document.createElement("p");
-    p.style.color = color;
-    p.innerText = `${sender}: ${text}`;
-    chatBox.appendChild(p);
-    chatBox.scrollTop = chatBox.scrollHeight;
+
+const generatedRoom = generateRoomId();
+
+roomIdElement.textContent = generatedRoom;
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+function setStatus(message, active = false) {
+
+    statusText.textContent = message;
+
+    if (active) {
+
+        statusDot.classList.add("active");
+
+    } else {
+
+        statusDot.classList.remove("active");
+
+    }
 }
 
-// 7. Hang Up Button (Call Katna)
-document.getElementById('hangup-btn').addEventListener('click', () => {
-    if (currentCall) currentCall.close();
+
+/* =========================================
+   TOAST
+========================================= */
+
+function showToast(message) {
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 2500);
+
+}
+
+
+/* =========================================
+   START CAMERA
+========================================= */
+
+async function startCamera() {
+
+    try {
+
+        localStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    width: {
+                        ideal: 1280
+                    },
+
+                    height: {
+                        ideal: 720
+                    }
+                },
+
+                audio: true
+
+            });
+
+
+        localVideo.srcObject = localStream;
+
+
+        localPlaceholder.classList.add("hidden");
+
+
+        startBtn.disabled = true;
+
+        hangupBtn.disabled = false;
+
+
+        micBtn.disabled = false;
+
+        videoBtn.disabled = false;
+
+        screenBtn.disabled = false;
+
+
+        setStatus(
+            "Camera and microphone ready",
+            true
+        );
+
+
+        /*
+            Create peer connection.
+
+            This becomes useful when the signaling
+            server exchanges SDP/ICE information.
+        */
+
+        createPeerConnection();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        setStatus(
+            "Camera/microphone permission denied"
+        );
+
+        alert(
+            "Camera aur microphone permission allow karo."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CREATE PEER CONNECTION
+========================================= */
+
+function createPeerConnection() {
+
+    peerConnection =
+        new RTCPeerConnection(rtcConfig);
+
+
+    /*
+        Add local tracks
+    */
+
     if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-    }
-    localVideo.srcObject = null;
-    remoteVideo.srcObject = null;
-    logToTelegram(`🛑 *Call Disconnected*`);
-    alert("Call Ended.");
-});
 
-// 8. Hard Delete Chat
-document.getElementById('clear-btn').addEventListener('click', () => {
-    chatBox.innerHTML = '<p style="color: #888;">System Standby...</p>';
-    logToTelegram(`🗑️ *Vault Cleared*`);
-});
+        localStream
+            .getTracks()
+            .forEach(track => {
+
+                peerConnection.addTrack(
+                    track,
+                    localStream
+                );
+
+            });
+
+    }
+
+
+    /*
+        Receive remote tracks
+    */
+
+    peerConnection.ontrack = event => {
+
+        if (event.streams && event.streams[0]) {
+
+            remoteVideo.srcObject =
+                event.streams[0];
+
+            remotePlaceholder.classList.add(
+                "hidden"
+            );
+
+            setStatus(
+                "Connected",
+                true
+            );
+
+        }
+
+    };
+
+
+    /*
+        ICE candidates
+
+        These need to be sent to the other
+        browser through a signaling server.
+    */
+
+    peerConnection.onicecandidate = event => {
+
+        if (event.candidate) {
+
+            console.log(
+                "ICE candidate:",
+                event.candidate
+            );
+
+            /*
+                TODO:
+
+                socket.emit("ice-candidate",
+                    event.candidate
+                );
+            */
+
+        }
+
+    };
+
+
+    /*
+        Connection state
+    */
+
+    peerConnection.onconnectionstatechange =
+        () => {
+
+            console.log(
+                "Connection:",
+                peerConnection.connectionState
+            );
+
+            switch (
+                peerConnection.connectionState
+            ) {
+
+                case "connected":
+
+                    setStatus(
+                        "Connected",
+                        true
+                    );
+
+                    break;
+
+
+                case "connecting":
+
+                    setStatus(
+                        "Connecting..."
+                    );
+
+                    break;
+
+
+                case "disconnected":
+
+                    setStatus(
+                        "Disconnected"
+                    );
+
+                    break;
+
+
+                case "failed":
+
+                    setStatus(
+                        "Connection failed"
+                    );
+
+                    break;
+
+
+                case "closed":
+
+                    setStatus(
+                        "Call ended"
+                    );
+
+                    break;
+
+            }
+
+        };
+
+}
+
+
+/* =========================================
+   MICROPHONE
+========================================= */
+
+function toggleMicrophone() {
+
+    if (!localStream) return;
+
+
+    const audioTracks =
+        localStream.getAudioTracks();
+
+
+    audioTracks.forEach(track => {
+
+        track.enabled = !track.enabled;
+
+        isMicOn = track.enabled;
+
+    });
+
+
+    if (isMicOn) {
+
+        micBtn.classList.remove("active");
+
+        micBtn.querySelector(".icon")
+            .textContent = "🎤";
+
+        micBtn.querySelector("span:last-child")
+            .textContent = "Mute";
+
+    } else {
+
+        micBtn.classList.add("active");
+
+        micBtn.querySelector(".icon")
+            .textContent = "🔇";
+
+        micBtn.querySelector("span:last-child")
+            .textContent = "Unmute";
+
+    }
+
+}
+
+
+/* =========================================
+   CAMERA
+========================================= */
+
+function toggleCamera() {
+
+    if (!localStream) return;
+
+
+    const videoTracks =
+        localStream.getVideoTracks();
+
+
+    videoTracks.forEach(track => {
+
+        track.enabled = !track.enabled;
+
+        isVideoOn = track.enabled;
+
+    });
+
+
+    if (isVideoOn) {
+
+        videoBtn.classList.remove("active");
+
+        videoBtn.querySelector(".icon")
+            .textContent = "📹";
+
+        videoBtn.querySelector("span:last-child")
+            .textContent = "Camera";
+
+        localPlaceholder.classList.add(
+            "hidden"
+        );
+
+    } else {
+
+        videoBtn.classList.add("active");
+
+        videoBtn.querySelector(".icon")
+            .textContent = "🚫";
+
+        videoBtn.querySelector("span:last-child")
+            .textContent = "Camera Off";
+
+        localPlaceholder.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SCREEN SHARING
+========================================= */
+
+async function shareScreen() {
+
+    try {
+
+        screenStream =
+            await navigator.mediaDevices.getDisplayMedia({
+
+                video: true,
+
+                audio: true
+
+            });
+
+
+        const screenTrack =
+            screenStream.getVideoTracks()[0];
+
+
+        if (!localStream) {
+
+            localStream =
+                new MediaStream();
+
+        }
+
+
+        /*
+            Show screen locally
+        */
+
+        localVideo.srcObject =
+            screenStream;
+
+
+        /*
+            Replace camera track in WebRTC
+        */
+
+        if (peerConnection) {
+
+            const sender =
+                peerConnection
+                    .getSenders()
+                    .find(
+                        sender =>
+                            sender.track &&
+                            sender.track.kind === "video"
+                    );
+
+
+            if (sender) {
+
+                await sender.replaceTrack(
+                    screenTrack
+                );
+
+            }
+
+        }
+
+
+        screenTrack.onended =
+            () => {
+
+                stopScreenShare();
+
+            };
+
+
+        screenBtn.classList.add("active");
+
+        setStatus(
+            "Screen sharing",
+            true
+        );
+
+
+    } catch (error) {
+
+        console.log(
+            "Screen sharing cancelled"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   STOP SCREEN SHARE
+========================================= */
+
+async function stopScreenShare() {
+
+    if (screenStream) {
+
+        screenStream
+            .getTracks()
+            .forEach(track =>
+                track.stop()
+            );
+
+        screenStream = null;
+
+    }
+
+
+    /*
+        Return to camera
+    */
+
+    if (localStream) {
+
+        localVideo.srcObject =
+            localStream;
+
+
+        const cameraTrack =
+            localStream.getVideoTracks()[0];
+
+
+        if (peerConnection && cameraTrack) {
+
+            const sender =
+                peerConnection
+                    .getSenders()
+                    .find(
+                        sender =>
+                            sender.track &&
+                            sender.track.kind === "video"
+                    );
+
+
+            if (sender) {
+
+                await sender.replaceTrack(
+                    cameraTrack
+                );
+
+            }
+
+        }
+
+    }
+
+
+    screenBtn.classList.remove("active");
+
+    setStatus(
+        "Camera active",
+        true
+    );
+
+}
+
+
+/* =========================================
+   END CALL
+========================================= */
+
+function endCall() {
+
+    /*
+        Stop local media
+    */
+
+    if (localStream) {
+
+        localStream
+            .getTracks()
+            .forEach(track =>
+                track.stop()
+            );
+
+        localStream = null;
+
+    }
+
+
+    /*
+        Stop screen
+    */
+
+    if (screenStream) {
+
+        screenStream
+            .getTracks()
+            .forEach(track =>
+                track.stop()
+            );
+
+        screenStream = null;
+
+    }
+
+
+    /*
+        Close WebRTC
+    */
+
+    if (peerConnection) {
+
+        peerConnection.close();
+
+        peerConnection = null;
+
+    }
+
+
+    localVideo.srcObject = null;
+
+    remoteVideo.srcObject = null;
+
+
+    localPlaceholder.classList.remove(
+        "hidden"
+    );
+
+    remotePlaceholder.classList.remove(
+        "hidden"
+    );
+
+
+    startBtn.disabled = false;
+
+    hangupBtn.disabled = true;
+
+    micBtn.disabled = true;
+
+    videoBtn.disabled = true;
+
+    screenBtn.disabled = true;
+
+
+    isMicOn = true;
+
+    isVideoOn = true;
+
+
+    setStatus(
+        "Call ended"
+    );
+
+}
+
+
+/* =========================================
+   COPY ROOM ID
+========================================= */
+
+copyRoomBtn.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            await navigator.clipboard.writeText(
+                roomIdElement.textContent
+            );
+
+            showToast(
+                "Room ID copied!"
+            );
+
+        } catch (error) {
+
+            showToast(
+                "Copy failed"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   JOIN ROOM
+========================================= */
+
+joinBtn.addEventListener(
+    "click",
+    () => {
+
+        const room =
+            roomInput.value.trim();
+
+
+        if (!room) {
+
+            showToast(
+                "Room ID enter karo"
+            );
+
+            return;
+
+        }
+
+
+        /*
+            Normally yahan signaling server
+            ko room join message bhejna hoga.
+
+            Example:
+
+            socket.emit("join-room", room);
+        */
+
+
+        roomIdElement.textContent =
+            room.toUpperCase();
+
+
+        showToast(
+            "Joined " + room.toUpperCase()
+        );
+
+
+        setStatus(
+            "Waiting for participant..."
+        );
+
+    }
+);
+
+
+/* =========================================
+   BUTTON EVENTS
+========================================= */
+
+startBtn.addEventListener(
+    "click",
+    startCamera
+);
+
+
+micBtn.addEventListener(
+    "click",
+    toggleMicrophone
+);
+
+
+videoBtn.addEventListener(
+    "click",
+    toggleCamera
+);
+
+
+screenBtn.addEventListener(
+    "click",
+    async () => {
+
+        if (screenStream) {
+
+            await stopScreenShare();
+
+        } else {
+
+            await shareScreen();
+
+        }
+
+    }
+);
+
+
+hangupBtn.addEventListener(
+    "click",
+    endCall
+);
+
+
+/* =========================================
+   INITIAL STATE
+========================================= */
+
+micBtn.disabled = true;
+
+videoBtn.disabled = true;
+
+screenBtn.disabled = true;
+
+hangupBtn.disabled = true;
+
+
+setStatus(
+    "Ready to connect"
+);
