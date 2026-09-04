@@ -3,166 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>PGN Secure Bridge</title>
-
+    <title>Call System UI</title>
+    <!-- CSS File Link -->
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <div class="app">
-
-        <header class="topbar">
-            <div>
-                <h1>PGN Secure Bridge</h1>
-                <p id="status">Ready to connect</p>
+    <div class="phone-container">
+        <!-- Display Screen -->
+        <div class="screen">
+            <div class="status-bar">
+                <span>12:00 PM</span>
+                <span>🔋 100%</span>
             </div>
+            <div class="number-display" id="display"></div>
+            <div class="call-status" id="status">Ready</div>
+        </div>
 
-            <div class="connection-dot" id="connectionDot"></div>
-        </header>
+        <!-- Keypad Grid -->
+        <div class="keypad">
+            <button class="key" onclick="pressKey('1')">1</button>
+            <button class="key" onclick="pressKey('2')">2</button>
+            <button class="key" onclick="pressKey('3')">3</button>
+            <button class="key" onclick="pressKey('4')">4</button>
+            <button class="key" onclick="pressKey('5')">5</button>
+            <button class="key" onclick="pressKey('6')">6</button>
+            <button class="key" onclick="pressKey('7')">7</button>
+            <button class="key" onclick="pressKey('8')">8</button>
+            <button class="key" onclick="pressKey('9')">9</button>
+            <button class="key btm-key" onclick="pressKey('*')">*</button>
+            <button class="key" onclick="pressKey('0')">0</button>
+            <button class="key btm-key" onclick="pressKey('#')">#</button>
+        </div>
 
-
-        <main>
-
-            <!-- Video Area -->
-            <section class="video-container">
-
-                <video id="remoteVideo" autoplay playsinline></video>
-
-                <div class="remote-placeholder" id="remotePlaceholder">
-                    <div class="avatar">P</div>
-                    <h2>Waiting for connection</h2>
-                    <p>Your video will appear here</p>
-                </div>
-
-                <div class="local-video-box">
-                    <video id="localVideo" autoplay muted playsinline></video>
-
-                    <div class="camera-placeholder" id="cameraPlaceholder">
-                        <span>Camera Off</span>
-                    </div>
-                </div>
-
-                <div class="call-time" id="callTime">
-                    00:00
-                </div>
-
-            </section>
-
-
-            <!-- Controls -->
-            <section class="controls">
-
-                <button class="control-btn" id="cameraBtn">
-                    <span class="icon">📹</span>
-                    <span>Camera</span>
-                </button>
-
-                <button class="control-btn" id="micBtn">
-                    <span class="icon">🎤</span>
-                    <span>Mic</span>
-                </button>
-
-                <button class="control-btn chat-control" id="chatBtn">
-                    <span class="icon">💬</span>
-                    <span>Chat</span>
-                </button>
-
-                <button class="control-btn media-control" id="mediaBtn">
-                    <span class="icon">📎</span>
-                    <span>Media</span>
-                </button>
-
-                <button class="control-btn hangup" id="hangupBtn">
-                    <span class="icon">📞</span>
-                    <span>Hang Up</span>
-                </button>
-
-            </section>
-
-
-            <!-- Connection -->
-            <section class="connection-panel">
-
-                <h2>Secure Connection</h2>
-
-                <div class="connection-row">
-
-                    <input
-                        type="text"
-                        id="roomInput"
-                        placeholder="Enter room ID"
-                        autocomplete="off"
-                    >
-
-                    <button id="connectBtn">
-                        Connect
-                    </button>
-
-                </div>
-
-                <p class="security">
-                    🔒 Connection protected by WebRTC encryption
-                </p>
-
-            </section>
-
-
-            <!-- Chat -->
-            <section class="chat-panel" id="chatPanel">
-
-                <div class="chat-header">
-                    <h2>Chat</h2>
-
-                    <button id="closeChat">
-                        ✕
-                    </button>
-                </div>
-
-                <div class="messages" id="messages">
-
-                    <div class="message received">
-                        <span>System</span>
-                        <p>Welcome to PGN Secure Bridge.</p>
-                    </div>
-
-                </div>
-
-                <div class="chat-input">
-
-                    <input
-                        type="text"
-                        id="messageInput"
-                        placeholder="Type a message..."
-                    >
-
-                    <button id="sendBtn">
-                        Send
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- Media -->
-            <input
-                type="file"
-                id="mediaInput"
-                hidden
-                multiple
-                accept="image/*,video/*,audio/*,.pdf"
-            >
-
-        </main>
-
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button class="btn-call" id="callBtn" onclick="toggleCall()">📞 Call</button>
+            <button class="btn-clear" onclick="clearDisplay()">⌫ Clear</button>
+        </div>
     </div>
 
-
-    <div class="toast" id="toast"></div>
-
+    <!-- JavaScript File Link -->
     <script src="script.js"></script>
-
 </body>
 </html>
