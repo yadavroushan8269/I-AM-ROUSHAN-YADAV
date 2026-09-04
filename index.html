@@ -3,47 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Call System UI</title>
-    <!-- CSS File Link -->
+    <title>PGN Secure Bridge</title>
     <link rel="stylesheet" href="style.css">
+    <!-- PeerJS Library for P2P Video/Audio/Chat -->
+    <script src="https://unpkg.com"></script>
 </head>
 <body>
 
-    <div class="phone-container">
-        <!-- Display Screen -->
-        <div class="screen">
-            <div class="status-bar">
-                <span>12:00 PM</span>
-                <span>🔋 100%</span>
-            </div>
-            <div class="number-display" id="display"></div>
-            <div class="call-status" id="status">Ready</div>
-        </div>
-
-        <!-- Keypad Grid -->
-        <div class="keypad">
-            <button class="key" onclick="pressKey('1')">1</button>
-            <button class="key" onclick="pressKey('2')">2</button>
-            <button class="key" onclick="pressKey('3')">3</button>
-            <button class="key" onclick="pressKey('4')">4</button>
-            <button class="key" onclick="pressKey('5')">5</button>
-            <button class="key" onclick="pressKey('6')">6</button>
-            <button class="key" onclick="pressKey('7')">7</button>
-            <button class="key" onclick="pressKey('8')">8</button>
-            <button class="key" onclick="pressKey('9')">9</button>
-            <button class="key btm-key" onclick="pressKey('*')">*</button>
-            <button class="key" onclick="pressKey('0')">0</button>
-            <button class="key btm-key" onclick="pressKey('#')">#</button>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="actions">
-            <button class="btn-call" id="callBtn" onclick="toggleCall()">📞 Call</button>
-            <button class="btn-clear" onclick="clearDisplay()">⌫ Clear</button>
+    <div class="header-user">
+        <div class="user-badge">
+            <span class="avatar">R</span> <span id="userNameDisplay">Roshan Kumar</span>
         </div>
     </div>
 
-    <!-- JavaScript File Link -->
+    <div class="main-container">
+        <h1 class="title">PGN Secure Bridge</h1>
+        
+        <div class="id-section">
+            <p class="my-id-label">Your ID: <span id="my-id" class="highlight-id">Generating...</span></p>
+            <p class="status-node">● Node Online</p>
+        </div>
+
+        <div class="contacts-section">
+            <span class="label-text">Saved Contacts:</span>
+            <div class="contacts-buttons">
+                <button class="btn-contact" onclick="setRemoteId('IN-BR-PRINCE-1111')">PRINCE (BR)</button>
+                <button class="btn-contact" onclick="setRemoteId('IN-BR-PRINCE-2222')">PRINCE (BR)</button>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="remote-id-input" placeholder="Remote ID (e.g., IN-TG-PRINCE-8A1C)">
+        </div>
+
+        <div class="call-actions">
+            <button class="btn-video" id="videoCallBtn">Video Call</button>
+            <button class="btn-audio" id="audioCallBtn">Audio Call</button>
+        </div>
+
+        <!-- Video Elements (Hidden by default, shows during call) -->
+        <div class="video-container" id="videoArea" style="display:none;">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <video id="remoteVideo" autoplay playsinline></video>
+            <button class="btn-delete" id="endCallBtn">End Call</button>
+        </div>
+
+        <div class="vault-header">
+            <span class="vault-title">Direct P2P Vault</span>
+            <button class="btn-delete" onclick="clearChat()">Hard Delete Chat</button>
+        </div>
+
+        <div class="chat-box" id="chat-box">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="message-input-area">
+            <input type="text" id="msg-input" placeholder="Type message...">
+            <button class="btn-send" id="sendMsgBtn">Send</button>
+        </div>
+
+        <div class="media-section">
+            <label class="media-label">Send Photo / Video:</label>
+            <div class="file-upload-wrapper">
+                <input type="file" id="file-input">
+                <button class="btn-media" id="sendMediaBtn">Send Media</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
