@@ -1,58 +1,160 @@
-let display = document.getElementById('display');
-let statusText = document.getElementById('status');
-let callBtn = document.getElementById('callBtn');
-let isCalling = false;
-
-// Number dial karne ke liye function
-function pressKey(num) {
-    if (isCalling) return; // Call chalne ke dauran dial block rahega
-    if (display.innerText.length < 15) {
-        display.innerText += num;
+// Apni custom ID format banane ke liye generator
+function generateRandomID() {
+    const chars = '0123456789ABCDEF';
+    let result = '';
+    for (let i = 0; i < 4; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
     }
+    return `IN-JH-ROSHAN-${result}`;
 }
 
-// Number saaf karne ke liye function
-function clearDisplay() {
-    if (isCalling) return;
-    display.innerText = display.innerText.slice(0, -1);
+const myId = generateRandomID();
+document.getElementById('my-id').innerText = myId;
+
+// PeerJS object ko initialize karein
+const peer = new Peer(myId);
+
+let conn = null;
+let currentCall = null;
+let localStream = null;
+
+const chatBox = document.getElementById('chat-box');
+const remoteIdInput = document.getElementById('remote-id-input');
+const msgInput = document.getElementById('msg-input');
+
+// Jab network se connection ban jaye
+peer.on('open', (id) => {
+    console.log('Connected to PeerServer with ID: ' + id);
+});
+
+// 1. CHAT SYSTEM: Incoming Text Connection handle karna
+peer.on('connection', (incomingConn) => {
+    conn = incomingConn;
+    setupChatConnection();
+});
+
+// Outgoing Text Connection banana
+function connectToPeer() {
+    const remoteId = remoteIdInput.value.trim();
+    if (!remoteId) return false;
+    if (!conn || conn.peer !== remoteId) {
+        conn = peer.connect(remoteId);
+        setupChatConnection();
+    }
+    return true;
 }
 
-// Call button functionality
-function toggleCall() {
-    if (display.innerText === "") {
-        statusText.innerText = "Please enter a number";
-        statusText.style.color = "#ef4444";
-        return;
-    }
+function setupChatConnection() {
+    conn.on('open', () => {
+        appendMessage('System', 'Secure Bridge Established.', 'msg-peer');
+    });
+    conn.on('data', (data) => {
+        if(data.type === 'text') {
+            appendMessage('Remote', data.content, 'msg-peer');
+        }
+    });
+}
 
-    if (!isCalling) {
-        // Call Connect ho rhi hai
-        isCalling = true;
-        statusText.innerText = "Calling...";
-        statusText.style.color = "#38bdf8";
-        callBtn.innerText = "🛑 End Call";
-        callBtn.classList.add('calling');
-        
-        // 2 second baad sound/status simulate karne ke liye
-        setTimeout(() => {
-            if (isCalling) {
-                statusText.innerText = "Connected";
-                statusText.style.color = "#10b981";
-            }
-        }, 2000);
+// Message send karne ka function
+document.getElementById('sendMsgBtn').addEventListener('click', () => {
+    const text = msgInput.value.trim();
+    if (!text) return;
+    
+    connectToPeer();
+    
+    if (conn && conn.open) {
+        conn.send({ type: 'text', content: text });
+        appendMessage('You', text, 'msg-me');
+        msgInput.value = '';
     } else {
-        // Call Cut ho rhi hai
-        isCalling = false;
-        statusText.innerText = "Call Ended";
-        statusText.style.color = "#f43f5e";
-        callBtn.innerText = "📞 Call";
-        callBtn.classList.remove('calling');
-        
-        setTimeout(() => {
-            if (!isCalling) {
-                statusText.innerText = "Ready";
-                statusText.style.color = "#10b981";
-            }
-        }, 1500);
+        alert("Connecting... Please press send again in a second.");
+    }
+});
+
+function appendMessage(sender, text, className) {
+    const p = document.createElement('p');
+    p.classList.add('msg-item', className);
+    p.innerText = `[${sender}]: ${text}`;
+    chatBox.appendChild(p);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function clearChat() {
+    chatBox.innerHTML = '';
+}
+
+function setRemoteId(id) {
+    remoteIdInput.value = id;
+}
+
+// 2. CALL SYSTEM: Audio/Video Calling Engine
+function startLocalStream(videoRequired, callback) {
+    navigator.mediaDevices.getUserMedia({ video: videoRequired, audio: true })
+    .then((stream) => {
+        localStream = stream;
+        document.getElementById('localVideo').srcObject = stream;
+        document.getElementById('videoArea').style.display = 'grid';
+        callback(stream);
+    })
+    .catch((err) => {
+        console.error('Failed to get local stream', err);
+        alert('Camera/Microphone access denied!');
+    });
+}
+
+// Incoming Call Handle Karna
+peer.on('call', (incomingCall) => {
+    const acceptCall = confirm("Incoming call from " + incomingCall.peer + ". Accept?");
+    if (acceptCall) {
+        startLocalStream(true, (stream) => {
+            incomingCall.answer(stream);
+            currentCall = incomingCall;
+            setupCallEvents();
+        });
+    } else {
+        incomingCall.close();
+    }
+});
+
+// Outgoing Video Call Button
+document.getElementById('videoCallBtn').addEventListener('click', () => {
+    const remoteId = remoteIdInput.value.trim();
+    if (!remoteId) return alert('Enter Remote ID first!');
+    
+    startLocalStream(true, (stream) => {
+        currentCall = peer.call(remoteId, stream);
+        setupCallEvents();
+    });
+});
+
+// Outgoing Audio Call Button
+document.getElementById('audioCallBtn').addEventListener('click', () => {
+    const remoteId = remoteIdInput.value.trim();
+    if (!remoteId) return alert('Enter Remote ID first!');
+    
+    startLocalStream(false, (stream) => {
+        currentCall = peer.call(remoteId, stream);
+        setupCallEvents();
+    });
+});
+
+function setupCallEvents() {
+    currentCall.on('stream', (remoteStream) => {
+        document.getElementById('remoteVideo').srcObject = remoteStream;
+    });
+    currentCall.on('close', () => {
+        endCall();
+    });
+}
+
+document.getElementById('endCallBtn').addEventListener('click', () => {
+    if (currentCall) currentCall.close();
+    endCall();
+});
+
+function endCall() {
+    document.getElementById('videoArea').style.display = 'none';
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
     }
 }
