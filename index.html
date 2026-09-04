@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGN Secure Bridge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Profile Bar -->
+        <div class="header">
+            <span class="avatar">R</span>
+            <span class="username">Roshan Kumar</span>
+        </div>
+
+        <!-- Main Card System -->
+        <div class="card">
+            <h2>PGN Secure Bridge</h2>
+            <p class="status">Your ID: <span class="highlight">IN-JH-ROSHAN-716E</span></p>
+            <p class="call-log">Call Terminated</p>
+
+            <div class="saved-contacts">
+                <p>Saved Contacts:</p>
+                <span class="badge">PRINCE (BR)</span>
+                <span class="badge">PRINCE (BR)</span>
+            </div>
+
+            <!-- ID Dynamic Input Info -->
+            <div class="target-id">
+                IN-BR-PRICE-9CBB
+            </div>
+
+            <!-- Call System Actions -->
+            <div class="action-buttons">
+                <button class="btn video-btn">Video Call</button>
+                <button class="btn audio-btn">Audio Call</button>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Vault System -->
+            <div class="vault-header">
+                <h3>Direct P2P Vault</h3>
+                <button class="btn delete-btn">Hard Delete Chat</button>
+            </div>
+
+            <!-- Output Message Log Screen -->
+            <div class="chat-box" id="chatBox">
+                <!-- Messages will load here -->
+            </div>
+
+            <!-- Input Controls Form -->
+            <div class="input-area">
+                <input type="text" id="msgInput" placeholder="Type message...">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+
+            <!-- Media Upload Box Component -->
+            <div class="media-box">
+                <p>Send Photo / Video:</p>
+                <div class="file-selector">
+                    <input type="file" id="fileInput">
+                </div>
+                <button class="btn media-btn">Send Media</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script href="script.js"></script>
+</body>
+</html>

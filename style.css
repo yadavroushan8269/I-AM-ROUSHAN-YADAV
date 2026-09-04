@@ -1,0 +1,170 @@
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    background-color: #00ff00;
+    color: #000000;
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.username {
+    color: #39ff14;
+    font-size: 14px;
+}
+
+.card {
+    border: 2px solid #00ff00;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 10px #00ff00;
+}
+
+h2 {
+    color: #39ff14;
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.status {
+    color: #ffff00;
+    font-size: 14px;
+}
+
+.highlight {
+    color: #00ffff;
+}
+
+.call-log {
+    color: #00ffff;
+    font-size: 13px;
+}
+
+.badge {
+    background-color: #222;
+    color: #39ff14;
+    border: 1px solid #39ff14;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.target-id {
+    border: 1px solid #00ff00;
+    padding: 10px;
+    border-radius: 5px;
+    color: #00ff00;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.video-btn { background-color: #00ff00; color: #000; }
+.audio-btn { background-color: #00bfff; color: #fff; }
+.delete-btn { background-color: #ff0000; color: #fff; max-width: 150px; font-size: 11px;}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #222;
+    margin: 20px 0;
+}
+
+.vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vault-header h3 {
+    color: #00ff00;
+    margin: 0;
+}
+
+.chat-box {
+    height: 150px;
+    background-color: #050505;
+    border: 1px solid #222;
+    border-radius: 5px;
+    margin: 15px 0;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.input-area {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.input-area input {
+    flex: 1;
+    background-color: #000;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.send-btn {
+    background-color: #00ff00;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.media-box {
+    border: 1px dashed #00ff00;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.file-selector {
+    margin: 10px 0;
+}
+
+.media-btn {
+    background-color: #00ffff;
+    color: #000;
+    width: 100%;
+}
