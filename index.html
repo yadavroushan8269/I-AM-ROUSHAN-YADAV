@@ -3,45 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>PGN Secure Bridge</title>
+
     <link rel="stylesheet" href="style.css">
-    <!-- PeerJS Library for P2P Video/Audio Calling -->
-    <script src="https://unpkg.com"></script>
 </head>
+
 <body>
-    <div class="container">
-        <h2>PGN Secure Bridge</h2>
-        
-        <!-- Peer Connection Status -->
-        <div class="status-box">
-            <p>Your ID: <span id="my-id" style="color: #00ff00; font-weight: bold;">Loading...</span></p>
-            <input type="text" id="remote-id" placeholder="Enter Target User ID...">
-        </div>
 
-        <!-- Video Feeds Section -->
-        <div class="video-container">
-            <video id="local-video" autoplay muted playsinline></video>
-            <video id="remote-video" autoplay playsinline></video>
-        </div>
+    <div class="app">
 
-        <!-- Calling Controls -->
-        <div class="controls">
-            <button id="video-call-btn" class="btn">Video Call</button>
-            <button id="audio-call-btn" class="btn">Audio Call</button>
-            <button id="hangup-btn" class="btn hangup">Hang Up (कॉल काटें)</button>
-        </div>
+        <header class="topbar">
+            <div>
+                <h1>PGN Secure Bridge</h1>
+                <p id="status">Ready to connect</p>
+            </div>
 
-        <!-- Chat Vault Section -->
-        <h3>Direct P2P Vault</h3>
-        <div id="chatBox" class="chat-box">
-            <p style="color: #888;">System Standby...</p>
-        </div>
-        
-        <div class="chat-input-area">
-            <input type="text" id="msgInput" placeholder="Type message...">
-            <button id="send-btn">Send</button>
-        </div>
-        <button id="clear-btn" class="btn delete">Hard Delete Chat</button>
+            <div class="connection-dot" id="connectionDot"></div>
+        </header>
+
+
+        <main>
+
+            <!-- Video Area -->
+            <section class="video-container">
+
+                <video id="remoteVideo" autoplay playsinline></video>
+
+                <div class="remote-placeholder" id="remotePlaceholder">
+                    <div class="avatar">P</div>
+                    <h2>Waiting for connection</h2>
+                    <p>Your video will appear here</p>
+                </div>
+
+                <div class="local-video-box">
+                    <video id="localVideo" autoplay muted playsinline></video>
+
+                    <div class="camera-placeholder" id="cameraPlaceholder">
+                        <span>Camera Off</span>
+                    </div>
+                </div>
+
+                <div class="call-time" id="callTime">
+                    00:00
+                </div>
+
+            </section>
+
+
+            <!-- Controls -->
+            <section class="controls">
+
+                <button class="control-btn" id="cameraBtn">
+                    <span class="icon">📹</span>
+                    <span>Camera</span>
+                </button>
+
+                <button class="control-btn" id="micBtn">
+                    <span class="icon">🎤</span>
+                    <span>Mic</span>
+                </button>
+
+                <button class="control-btn chat-control" id="chatBtn">
+                    <span class="icon">💬</span>
+                    <span>Chat</span>
+                </button>
+
+                <button class="control-btn media-control" id="mediaBtn">
+                    <span class="icon">📎</span>
+                    <span>Media</span>
+                </button>
+
+                <button class="control-btn hangup" id="hangupBtn">
+                    <span class="icon">📞</span>
+                    <span>Hang Up</span>
+                </button>
+
+            </section>
+
+
+            <!-- Connection -->
+            <section class="connection-panel">
+
+                <h2>Secure Connection</h2>
+
+                <div class="connection-row">
+
+                    <input
+                        type="text"
+                        id="roomInput"
+                        placeholder="Enter room ID"
+                        autocomplete="off"
+                    >
+
+                    <button id="connectBtn">
+                        Connect
+                    </button>
+
+                </div>
+
+                <p class="security">
+                    🔒 Connection protected by WebRTC encryption
+                </p>
+
+            </section>
+
+
+            <!-- Chat -->
+            <section class="chat-panel" id="chatPanel">
+
+                <div class="chat-header">
+                    <h2>Chat</h2>
+
+                    <button id="closeChat">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="messages" id="messages">
+
+                    <div class="message received">
+                        <span>System</span>
+                        <p>Welcome to PGN Secure Bridge.</p>
+                    </div>
+
+                </div>
+
+                <div class="chat-input">
+
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Type a message..."
+                    >
+
+                    <button id="sendBtn">
+                        Send
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- Media -->
+            <input
+                type="file"
+                id="mediaInput"
+                hidden
+                multiple
+                accept="image/*,video/*,audio/*,.pdf"
+            >
+
+        </main>
+
     </div>
+
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+
 </body>
 </html>
