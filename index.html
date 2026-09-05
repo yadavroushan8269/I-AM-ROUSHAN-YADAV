@@ -4,80 +4,310 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PGN Secure Bridge</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Fixed: Added Correct PeerJS CDN Library -->
+    <!-- PeerJS aur WebRTC Libraries for Real-time Video/Audio Calling -->
     <script src="https://unpkg.com"></script>
+    <style>
+        /* ==================== FILE 1: GREEN MATRIX THEME (COMBINED & DESIGNED) ==================== */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            background-color: #00ff00;
+            color: #000000;
+            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+        .username {
+            color: #39ff14;
+            font-size: 14px;
+        }
+
+        .card {
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 10px #00ff00;
+            background-color: #050505;
+        }
+
+        h2 {
+            color: #39ff14;
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .status {
+            color: #ffff00;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .follow-btn { 
+            background-color: transparent; 
+            color: #39ff14; 
+            border: 1px solid #39ff14;
+            border-radius: 5px;
+            padding: 5px 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+        
+        .follow-btn:hover {
+            background-color: rgba(57, 255, 20, 0.2);
+        }
+
+        .video-btn { background-color: #00ff00; color: #000; }
+        .audio-btn { background-color: #00bfff; color: #fff; }
+        .delete-btn { background-color: #ff0000; color: #fff; padding: 6px 12px; font-size: 12px; border-radius: 5px; border: none; cursor: pointer; }
+
+        .target-id input {
+            width: 100%;
+            padding: 12px;
+            background-color: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            border-radius: 5px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .vault-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .vault-header h3 {
+            color: #00ff00;
+            margin: 0;
+        }
+
+        .chat-box {
+            height: 150px;
+            background-color: #050505;
+            border: 1px solid #222;
+            border-radius: 5px;
+            margin: 15px 0;
+            padding: 10px;
+            overflow-y: auto;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .input-area input {
+            flex: 1;
+            background-color: #000;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .send-btn {
+            background-color: #00ff00;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .media-box {
+            border: 1px dashed #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .media-btn {
+            background-color: #00ffff;
+            color: #000;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        video {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+            background-color: #222;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="header-user">
-        <div class="user-badge">
-            <span class="avatar">R</span> <span id="userNameDisplay">Roshan Kumar</span>
-        </div>
+<div class="container">
+    <!-- Header Section -->
+    <div class="header">
+        <div class="avatar">R</div>
+        <div class="username">Roshan Kumar</div>
     </div>
 
-    <div class="main-container">
-        <h1 class="title">PGN Secure Bridge</h1>
+    <!-- Main PGN Secure Bridge Card -->
+    <div class="card">
+        <h2>PGN Secure Bridge</h2>
+        <div class="status">Your ID: <span id="my-id" style="color: #00ffff; font-weight: bold;">Generating...</span></div>
+        <div class="status" id="call-status" style="color: #ff1493;">• Node Online</div>
         
-        <div class="id-section">
-            <p class="my-id-label">Your ID: <span id="my-id" class="highlight-id">Generating...</span></p>
-            <p class="status-node">● Node Online</p>
+        <div style="margin: 15px 0; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #aaa; font-size: 14px;">Instagram (yadavroushan4011)</span>
+            <!-- FIX 1: Working Follow Link -->
+            <a href="https://instagram.com" target="_blank" class="follow-btn">Follow Now</a>
         </div>
 
-        <div class="contacts-section">
-            <span class="label-text">Roushan Yadav ( Owner):</span>
-            <div class="contacts-buttons">
-                <button class="btn-contact" onclick="setRemoteId('IN-BR-PRINCE-1111')">Instagram (yadavroushan4011)</button>
-                <button class="btn-contact" onclick="setRemoteId('IN-BR-PRINCE-2222')">Follow Now</button>
-            </div>
+        <!-- Input field for Remote ID -->
+        <div class="target-id">
+            <input type="text" id="remote-id" placeholder="Remote ID (Enter Friend's ID here)">
         </div>
 
-        <div class="input-group">
-            <input type="text" id="remote-id-input" placeholder="Remote ID (e.g., Don't Call Me )">
+        <!-- Call Action Buttons -->
+        <div class="action-buttons">
+            <!-- FIX 2: Working Video & Audio Call Buttons -->
+            <button class="btn video-btn" id="videoCallBtn">Video Call</button>
+            <button class="btn audio-btn" id="audioCallBtn">Audio Call</button>
         </div>
+        
+        <!-- Video elements for streaming -->
+        <video id="localVideo" autoplay muted></video>
+        <video id="remoteVideo" autoplay></video>
 
-        <div class="call-actions">
-            <button class="btn-video" id="videoCallBtn">Video Call</button>
-            <button class="btn-audio" id="audioCallBtn">Audio Call</button>
-        </div>
+        <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
 
-        <!-- Video Elements Container -->
-        <div class="video-container" id="videoArea" style="display:none; margin: 15px 0; border: 1px solid #0f0; padding: 10px; border-radius: 8px;">
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                <video id="localVideo" autoplay muted playsinline style="width: 50%; background: #000; border-radius: 4px;"></video>
-                <video id="remoteVideo" autoplay playsinline style="width: 50%; background: #000; border-radius: 4px;"></video>
-            </div>
-            <button class="btn-delete" id="endCallBtn" style="width: 100%;">End Call</button>
-        </div>
-
+        <!-- Direct P2P Vault Section -->
         <div class="vault-header">
-            <span class="vault-title">Direct P2P Vault</span>
-            <button class="btn-delete" onclick="clearChat()">Hard Delete Chat</button>
+            <h3>Direct P2P Vault</h3>
+            <!-- FIX 3: Working Hard Delete Button -->
+            <button class="delete-btn" id="hardDeleteBtn">Hard Delete Chat</button>
         </div>
 
-        <!-- Fixed Chatbox Container to accept messages naturally -->
-        <div class="chat-box" id="chat-box" style="height: 200px; border: 1px solid #333; overflow-y: auto; padding: 10px; margin-bottom: 10px; background: #050505; color: #0f0; font-family: monospace; border-radius: 5px; white-space: pre-wrap;"></div>
-
-        <div class="message-input-area">
-            <input type="text" id="msg-input" placeholder="Type message...">
-            <button class="btn-send" id="sendMsgBtn">Send</button>
+        <!-- Chat Stream Window -->
+        <div class="chat-box" id="chatBox">
+            <div style="color: #555; text-align: center;">Secure P2P Chat Started.</div>
         </div>
 
-        <div class="media-section">
-            <label class="media-label">Send Photo / Video:</label>
-            <div class="file-upload-wrapper">
-                <input type="file" id="file-input">
-                <button class="btn-media" id="sendMediaBtn">Send Media</button>
-            </div>
+        <!-- Text Input Area -->
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type message...">
+            <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+
+        <!-- File Media Sending Box -->
+        <div class="media-box">
+            <span style="font-size: 13px; color: #00ff00;">Send Photo / Video:</span>
+            <input type="file" id="fileInput" class="btn" style="color: #fff; font-size: 11px;">
+            <button class="btn media-btn" id="sendMediaBtn">Send Media</button>
         </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
-    <script>
-        // Helper to click on contacts
-        function setRemoteId(id) {
-            document.getElementById('remote-id-input').value = id;
+<!-- ==================== JAVASCRIPT LOGIC OPERATIONS ==================== -->
+<script>
+    let peer;
+    let localStream;
+    const myIdDisplay = document.getElementById('my-id');
+    const remoteIdInput = document.getElementById('remote-id');
+    const callStatus = document.getElementById('call-status');
+    const chatBox = document.getElementById('chatBox');
+    const messageInput = document.getElementById('messageInput');
+
+    // 1. Initializing Peer Server Connections (Generates Unique ID Automatically)
+    peer = new Peer('IN-JH-ROSHAN-' + Math.floor(1000 + Math.random() * 9000));
+    
+    peer.on('open', (id) => {
+        myIdDisplay.innerText = id;
+    });
+
+    // 2. Handling Incoming Video/Audio Calls
+    peer.on('call', (call) => {
+        callStatus.innerText = "• Incoming Call Connecting...";
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+            localStream = stream;
+            document.getElementById('localVideo').style.display = 'block';
+            document.getElementById('localVideo').srcObject = stream;
+            
+            call.answer(stream); // Answer the call with local stream
+            call.on('stream', (remoteStream) => {
+                document.getElementById('remoteVideo').style.display = 'block';
+                document.getElementById('remoteVideo').srcObject = remoteStream;
+                callStatus.innerText = "• Call Connected Live";
+            });
+        }).catch(err => {
+            alert("Camera/Microphone Permission Denied: " + err);
+        });
+    });
+
+    // 3. FIX: OUTGOING VIDEO CALL LOGIC
+    document.getElementById('videoCallBtn').addEventListener('click', () => {
+        const remoteId = remoteIdInput.value.trim();
+        if (!remoteId) {
+            alert("Error: Pehle apne friend ki 'Remote ID' enter karein tabhi call connect hogi!");
+            return;
         }
-    </script>
-</body>
-</html>
+        
+        callStatus.innerText = "• Calling to " + remoteId + "...";
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+            localStream = stream;
+            document.getElementById('localVideo').style.display = 'block';
+            document.getElementById('localVideo').srcObject = stream;
+
+            const call = peer.call(remoteId, stream);
