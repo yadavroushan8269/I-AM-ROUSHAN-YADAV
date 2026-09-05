@@ -1,1190 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PGN Secure Bridge</title>
 
-<title>PGN Secure Bridge</title>
+  <link rel="stylesheet" href="style.css">
 
-<!-- Correct PeerJS Library -->
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-
-<style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    background: #000;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    width: 100%;
-    max-width: 450px;
-}
-
-.card {
-    border: 2px solid #00ff00;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 15px #00ff00;
-    background: #050505;
-}
-
-h2 {
-    color: #39ff14;
-    text-align: center;
-}
-
-.status {
-    color: #ffff00;
-    font-size: 14px;
-    margin: 10px 0;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    background: #000;
-    border: 1px solid #00ff00;
-    color: #00ff00;
-    border-radius: 5px;
-    margin-bottom: 12px;
-}
-
-input[type="text"]:focus {
-    outline: none;
-    box-shadow: 0 0 8px #00ff00;
-}
-
-.btn {
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.reg-btn,
-.video-btn {
-    background: #00ff00;
-    color: #000;
-}
-
-.audio-btn {
-    background: #00bfff;
-    color: white;
-}
-
-.end-btn {
-    background: #ff0000;
-    color: white;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 8px;
-    margin: 10px 0;
-}
-
-.action-buttons .btn {
-    flex: 1;
-}
-
-#registerScreen {
-    display: none;
-}
-
-#mainAppScreen {
-    display: none;
-}
-
-.video-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-video {
-    width: 100%;
-    height: 140px;
-    background: #111;
-    border: 1px solid #00ff00;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.chat-box {
-    height: 180px;
-    overflow-y: auto;
-    border: 1px solid #333;
-    padding: 10px;
-    margin: 15px 0;
-    border-radius: 5px;
-    background: #000;
-}
-
-.message {
-    margin: 6px 0;
-    padding: 7px;
-    border-radius: 5px;
-    word-break: break-word;
-}
-
-.mine {
-    color: #00ff00;
-    text-align: right;
-}
-
-.remote {
-    color: #00ffff;
-}
-
-.input-area {
-    display: flex;
-    gap: 5px;
-}
-
-.input-area input {
-    flex: 1;
-    margin: 0;
-}
-
-.send-btn {
-    background: #00ff00;
-    color: #000;
-}
-
-.media-box {
-    border: 1px dashed #00ff00;
-    padding: 12px;
-    margin-top: 15px;
-    border-radius: 5px;
-}
-
-.media-btn {
-    width: 100%;
-    margin-top: 10px;
-    background: #00ffff;
-    color: #000;
-}
-
-.delete-btn {
-    background: red;
-    color: white;
-    padding: 7px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.vault-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.vault-header h3 {
-    color: #00ff00;
-}
-</style>
+  <!-- PeerJS -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-<!-- REGISTRATION -->
-<div id="registerScreen" class="card">
+  <!-- REGISTER -->
+  <section id="registerScreen" class="card register-card">
 
-<h2>Register Secure Node</h2>
+    <div class="logo">P</div>
 
-<p style="color:#aaa;text-align:center;font-size:13px">
-Apni personal ID banayein. Same device par ye ID save rahegi.
-</p>
+    <h1>PGN Secure Bridge</h1>
 
-<input
-type="text"
-id="regInputId"
-placeholder="Enter ID e.g. roshan-99"
->
+    <p class="subtitle">
+      Create your permanent personal ID
+    </p>
 
-<button class="btn reg-btn" id="subRegBtn">
-Create Permanent ID
-</button>
+    <input
+      id="registerId"
+      type="text"
+      placeholder="Example: roshan99"
+      maxlength="30"
+    >
+
+    <button id="createIdBtn" class="primary">
+      Create Permanent ID
+    </button>
+
+    <p class="small">
+      Your ID is stored on this device.
+    </p>
+
+  </section>
+
+
+  <!-- MAIN -->
+  <section id="mainScreen" class="hidden">
+
+    <header class="topbar">
+
+      <div>
+        <div class="brand">PGN Secure Bridge</div>
+        <div class="online">
+          <span></span> Node Online
+        </div>
+      </div>
+
+      <div class="profile">
+        <div id="profileLetter">R</div>
+        <span id="profileName">User</span>
+      </div>
+
+    </header>
+
+
+    <div class="card">
+
+      <!-- ID -->
+      <div class="my-id-box">
+        <span>Your Permanent ID</span>
+
+        <strong id="myId">Loading...</strong>
+
+        <button id="copyIdBtn">
+          Copy
+        </button>
+      </div>
+
+
+      <!-- CONTACT -->
+      <h3>Connect User</h3>
+
+      <div class="connect-row">
+
+        <input
+          id="remoteId"
+          type="text"
+          placeholder="Enter User ID"
+        >
+
+        <button id="connectBtn" class="primary">
+          Connect
+        </button>
+
+      </div>
+
+
+      <!-- CALL BUTTONS -->
+      <div class="call-buttons">
+
+        <button id="videoCallBtn" class="video">
+          📹 Video Call
+        </button>
+
+        <button id="audioCallBtn" class="audio">
+          📞 Audio Call
+        </button>
+
+        <button id="hangupBtn" class="danger">
+          ✕ Hang Up
+        </button>
+
+      </div>
+
+
+      <!-- VIDEOS -->
+      <div class="videos">
+
+        <div class="video-card">
+
+          <span>YOU</span>
+
+          <video
+            id="localVideo"
+            autoplay
+            muted
+            playsinline>
+          </video>
+
+        </div>
+
+        <div class="video-card">
+
+          <span>REMOTE</span>
+
+          <video
+            id="remoteVideo"
+            autoplay
+            playsinline>
+          </video>
+
+        </div>
+
+      </div>
+
+
+      <div id="callStatus" class="call-status">
+        Ready to connect
+      </div>
+
+
+      <!-- CHAT -->
+      <div class="section-title">
+
+        <h3>Direct P2P Vault</h3>
+
+        <button id="clearChatBtn" class="clear">
+          Clear
+        </button>
+
+      </div>
+
+
+      <div id="chatBox" class="chat-box">
+
+        <div class="empty">
+          Secure P2P Chat Stream
+        </div>
+
+      </div>
+
+
+      <div class="message-row">
+
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Type message..."
+        >
+
+        <button id="sendBtn" class="send">
+          Send
+        </button>
+
+      </div>
+
+
+      <!-- MEDIA -->
+      <div class="media">
+
+        <h3>Send Photo / Video / File</h3>
+
+        <input
+          id="fileInput"
+          type="file"
+        >
+
+        <button id="sendFileBtn" class="media-btn">
+          Send File
+        </button>
+
+      </div>
+
+
+      <!-- SETTINGS -->
+      <div class="settings">
+
+        <button id="changeIdBtn">
+          Change ID
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
 
 </div>
 
 
-<!-- MAIN APP -->
-<div id="mainAppScreen">
+<!-- INCOMING CALL -->
+<div id="incomingModal" class="modal hidden">
 
-<div class="card">
+  <div class="modal-box">
 
-<h2>PGN Secure Bridge</h2>
+    <div class="call-icon">📞</div>
 
-<div class="status">
-Your ID:
-<span id="my-id" style="color:#00ffff;font-weight:bold">
-Loading...
-</span>
-</div>
+    <h2>Incoming Call</h2>
 
-<div class="status" id="call-status">
-● Connecting...
-</div>
+    <p id="callerName">Someone is calling...</p>
 
-<input
-type="text"
-id="remote-id"
-placeholder="Enter User ID to Call / Chat"
->
+    <div class="modal-buttons">
 
-<div class="action-buttons">
+      <button id="acceptCallBtn" class="accept">
+        Accept
+      </button>
 
-<button class="btn video-btn" id="videoCallBtn">
-Video Call
-</button>
+      <button id="rejectCallBtn" class="reject">
+        Reject
+      </button>
 
-<button class="btn audio-btn" id="audioCallBtn">
-Audio Call
-</button>
+    </div>
 
-</div>
-
-<button
-class="btn end-btn"
-id="endCallBtn"
-style="width:100%;margin-bottom:10px"
->
-End Call
-</button>
-
-
-<div class="video-container">
-
-<div>
-<div style="color:#00ff00;font-size:11px">My Camera</div>
-
-<video
-id="localVideo"
-autoplay
-muted
-playsinline>
-</video>
-
-</div>
-
-<div>
-
-<div style="color:#00ffff;font-size:11px">
-Remote Camera
-</div>
-
-<video
-id="remoteVideo"
-autoplay
-playsinline>
-</video>
-
-</div>
+  </div>
 
 </div>
 
 
-<hr style="border:0;border-top:1px solid #333;margin:20px 0">
-
-
-<div class="vault-header">
-
-<h3>Direct P2P Chat</h3>
-
-<button
-class="delete-btn"
-id="hardDeleteBtn">
-Clear Chat
-</button>
-
-</div>
-
-
-<div class="chat-box" id="chatBox">
-
-<div style="color:#555;text-align:center">
-Secure P2P Chat Ready
-</div>
-
-</div>
-
-
-<div class="input-area">
-
-<input
-type="text"
-id="messageInput"
-placeholder="Type message..."
->
-
-<button
-class="btn send-btn"
-id="sendBtn">
-Send
-</button>
-
-</div>
-
-
-<div class="media-box">
-
-<div style="color:#00ff00">
-Send Photo / Video / File
-</div>
-
-<input
-type="file"
-id="fileInput"
-style="width:100%;margin-top:10px;color:white"
->
-
-<button
-class="btn media-btn"
-id="sendMediaBtn">
-Send Media
-</button>
-
-</div>
-
-</div>
-</div>
-
-</div>
-
-
-<script>
-
-/* =========================
-   VARIABLES
-========================= */
-
-let peer = null;
-
-let localStream = null;
-
-let currentCall = null;
-
-let dataConnection = null;
-
-
-const registerScreen =
-document.getElementById("registerScreen");
-
-const mainAppScreen =
-document.getElementById("mainAppScreen");
-
-const regInputId =
-document.getElementById("regInputId");
-
-const subRegBtn =
-document.getElementById("subRegBtn");
-
-const myIdDisplay =
-document.getElementById("my-id");
-
-const remoteIdInput =
-document.getElementById("remote-id");
-
-const callStatus =
-document.getElementById("call-status");
-
-const localVideo =
-document.getElementById("localVideo");
-
-const remoteVideo =
-document.getElementById("remoteVideo");
-
-const chatBox =
-document.getElementById("chatBox");
-
-const messageInput =
-document.getElementById("messageInput");
-
-const sendBtn =
-document.getElementById("sendBtn");
-
-const fileInput =
-document.getElementById("fileInput");
-
-const sendMediaBtn =
-document.getElementById("sendMediaBtn");
-
-const hardDeleteBtn =
-document.getElementById("hardDeleteBtn");
-
-
-/* =========================
-   CHECK SAVED ID
-========================= */
-
-const savedId =
-localStorage.getItem("pgnPermanentId");
-
-
-if (savedId) {
-
-    registerScreen.style.display = "none";
-
-    mainAppScreen.style.display = "block";
-
-    startPeer(savedId);
-
-} else {
-
-    registerScreen.style.display = "block";
-
-}
-
-
-/* =========================
-   CREATE ID
-========================= */
-
-subRegBtn.onclick = function () {
-
-    let newId =
-    regInputId.value
-    .trim()
-    .toLowerCase();
-
-    if (newId.length < 3) {
-
-        alert("ID must be at least 3 characters");
-
-        return;
-
-    }
-
-
-    newId =
-    newId.replace(/[^a-z0-9-_]/g, "");
-
-
-    localStorage.setItem(
-        "pgnPermanentId",
-        newId
-    );
-
-
-    registerScreen.style.display = "none";
-
-    mainAppScreen.style.display = "block";
-
-
-    startPeer(newId);
-
-};
-
-
-/* =========================
-   START PEER
-========================= */
-
-function startPeer(userId) {
-
-    callStatus.innerText =
-    "● Connecting Node...";
-
-
-    peer = new Peer(userId);
-
-
-    peer.on("open", function(id) {
-
-        myIdDisplay.innerText = id;
-
-        callStatus.innerText =
-        "● Node Online";
-
-    });
-
-
-    peer.on("error", function(err) {
-
-        console.log(err);
-
-
-        if (err.type === "unavailable-id") {
-
-            alert(
-            "This ID is already in use. Try another ID."
-            );
-
-            localStorage.removeItem(
-            "pgnPermanentId"
-            );
-
-            location.reload();
-
-        }
-
-        callStatus.innerText =
-        "● Error: " + err.type;
-
-    });
-
-
-    /* INCOMING CALL */
-
-    peer.on("call", function(call) {
-
-        const accept =
-        confirm(
-        "Incoming call from: " +
-        call.peer +
-        "\nAccept?"
-        );
-
-
-        if (!accept) {
-
-            call.close();
-
-            return;
-
-        }
-
-
-        navigator.mediaDevices
-        .getUserMedia({
-
-            video: true,
-
-            audio: true
-
-        })
-
-        .then(function(stream) {
-
-            localStream = stream;
-
-            localVideo.srcObject =
-            stream;
-
-
-            call.answer(stream);
-
-
-            currentCall = call;
-
-
-            call.on("stream", function(remoteStream) {
-
-                remoteVideo.srcObject =
-                remoteStream;
-
-                callStatus.innerText =
-                "● Call Connected";
-
-            });
-
-
-            call.on("close", function() {
-
-                remoteVideo.srcObject =
-                null;
-
-                callStatus.innerText =
-                "● Call Ended";
-
-            });
-
-        })
-
-        .catch(function(err) {
-
-            alert(
-            "Camera/Mic permission denied"
-            );
-
-        });
-
-    });
-
-
-    /* INCOMING CHAT CONNECTION */
-
-    peer.on("connection", function(conn) {
-
-        setupConnection(conn);
-
-    });
-
-}
-
-
-/* =========================
-   VIDEO CALL
-========================= */
-
-document
-.getElementById("videoCallBtn")
-.onclick =
-function() {
-
-    startCall(true);
-
-};
-
-
-/* =========================
-   AUDIO CALL
-========================= */
-
-document
-.getElementById("audioCallBtn")
-.onclick =
-function() {
-
-    startCall(false);
-
-};
-
-
-/* =========================
-   START CALL
-========================= */
-
-function startCall(withVideo) {
-
-    const remoteId =
-    remoteIdInput.value.trim();
-
-
-    if (!remoteId) {
-
-        alert("Enter Remote User ID");
-
-        return;
-
-    }
-
-
-    navigator.mediaDevices
-    .getUserMedia({
-
-        video: withVideo,
-
-        audio: true
-
-    })
-
-    .then(function(stream) {
-
-        localStream = stream;
-
-
-        localVideo.srcObject =
-        stream;
-
-
-        if (!withVideo) {
-
-            localVideo.style.display =
-            "none";
-
-        } else {
-
-            localVideo.style.display =
-            "block";
-
-        }
-
-
-        callStatus.innerText =
-        "● Calling...";
-
-
-        const call =
-        peer.call(
-            remoteId,
-            stream
-        );
-
-
-        currentCall = call;
-
-
-        call.on(
-        "stream",
-        function(remoteStream) {
-
-            remoteVideo.srcObject =
-            remoteStream;
-
-
-            callStatus.innerText =
-            "● Call Connected";
-
-        });
-
-
-        call.on(
-        "close",
-        function() {
-
-            remoteVideo.srcObject =
-            null;
-
-
-            callStatus.innerText =
-            "● Call Ended";
-
-        });
-
-
-        call.on(
-        "error",
-        function() {
-
-            callStatus.innerText =
-            "● Call Error";
-
-        });
-
-    })
-
-    .catch(function(err) {
-
-        alert(
-        "Please allow microphone/camera permission"
-        );
-
-        console.log(err);
-
-    });
-
-}
-
-
-/* =========================
-   END CALL
-========================= */
-
-document
-.getElementById("endCallBtn")
-.onclick =
-function() {
-
-    if (currentCall) {
-
-        currentCall.close();
-
-        currentCall = null;
-
-    }
-
-
-    if (localStream) {
-
-        localStream
-        .getTracks()
-        .forEach(function(track) {
-
-            track.stop();
-
-        });
-
-
-        localStream = null;
-
-    }
-
-
-    localVideo.srcObject =
-    null;
-
-
-    remoteVideo.srcObject =
-    null;
-
-
-    callStatus.innerText =
-    "● Node Online";
-
-};
-
-
-/* =========================
-   CONNECT FOR CHAT
-========================= */
-
-function connectChat() {
-
-    const remoteId =
-    remoteIdInput.value.trim();
-
-
-    if (!remoteId) {
-
-        alert(
-        "Enter Remote User ID first"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        dataConnection &&
-        dataConnection.open
-    ) {
-
-        return;
-
-    }
-
-
-    const conn =
-    peer.connect(remoteId, {
-
-        reliable: true
-
-    });
-
-
-    setupConnection(conn);
-
-}
-
-
-/* =========================
-   SETUP CONNECTION
-========================= */
-
-function setupConnection(conn) {
-
-    dataConnection = conn;
-
-
-    conn.on("open", function() {
-
-        addMessage(
-        "Connected with " +
-        conn.peer,
-        "remote"
-        );
-
-    });
-
-
-    conn.on("data", function(data) {
-
-        if (
-            data.type === "message"
-        ) {
-
-            addMessage(
-            data.text,
-            "remote"
-            );
-
-        }
-
-
-        if (
-            data.type === "file"
-        ) {
-
-            receiveFile(data);
-
-        }
-
-    });
-
-
-    conn.on("close", function() {
-
-        addMessage(
-        "User disconnected",
-        "remote"
-        );
-
-    });
-
-}
-
-
-/* =========================
-   SEND MESSAGE
-========================= */
-
-sendBtn.onclick =
-sendMessage;
-
-
-messageInput
-.addEventListener(
-"keydown",
-function(e) {
-
-    if (e.key === "Enter") {
-
-        sendMessage();
-
-    }
-
-});
-
-
-function sendMessage() {
-
-    const message =
-    messageInput.value.trim();
-
-
-    if (!message) return;
-
-
-    if (
-        !dataConnection ||
-        !dataConnection.open
-    ) {
-
-        connectChat();
-
-
-        setTimeout(
-        function() {
-
-            if (
-                dataConnection &&
-                dataConnection.open
-            ) {
-
-                dataConnection.send({
-
-                    type: "message",
-
-                    text: message
-
-                });
-
-
-                addMessage(
-                message,
-                "mine"
-                );
-
-
-                messageInput.value =
-                "";
-
-            } else {
-
-                alert(
-                "User is offline or connection failed"
-                );
-
-            }
-
-        },
-        1000
-        );
-
-
-        return;
-
-    }
-
-
-    dataConnection.send({
-
-        type: "message",
-
-        text: message
-
-    });
-
-
-    addMessage(
-    message,
-    "mine"
-    );
-
-
-    messageInput.value =
-    "";
-
-}
-
-
-/* =========================
-   ADD CHAT MESSAGE
-========================= */
-
-function addMessage(
-text,
-type
-) {
-
-    const div =
-    document.createElement("div");
-
-
-    div.className =
-    "message " + type;
-
-
-    div.innerText =
-    text;
-
-
-    chatBox.appendChild(div);
-
-
-    chatBox.scrollTop =
-    chatBox.scrollHeight;
-
-}
-
-
-/* =========================
-   SEND FILE
-========================= */
-
-sendMediaBtn.onclick =
-function() {
-
-    const file =
-    fileInput.files[0];
-
-
-    if (!file) {
-
-        alert("Select a file first");
-
-        return;
-
-    }
-
-
-    if (
-        !dataConnection ||
-        !dataConnection.open
-    ) {
-
-        alert(
-        "Connect to a user first by sending a message."
-        );
-
-        return;
-
-    }
-
-
-    const reader =
-    new FileReader();
-
-
-    reader.onload =
-    function() {
-
-        dataConnection.send({
-
-            type: "file",
-
-            name: file.name,
-
-            fileType: file.type,
-
-            data: reader.result
-
-        });
-
-
-        addMessage(
-        "📎 Sent: " +
-        file.name,
-        "mine"
-        );
-
-    };
-
-
-    reader.readAsDataURL(file);
-
-};
-
-
-/* =========================
-   RECEIVE FILE
-========================= */
-
-function receiveFile(data) {
-
-    const div =
-    document.createElement("div");
-
-
-    div.className =
-    "message remote";
-
-
-    const link =
-    document.createElement("a");
-
-
-    link.href =
-    data.data;
-
-
-    link.download =
-    data.name;
-
-
-    link.innerText =
-    "📥 Download: " +
-    data.name;
-
-
-    link.style.color =
-    "#00ffff";
-
-
-    div.appendChild(link);
-
-
-    chatBox.appendChild(div);
-
-
-    chatBox.scrollTop =
-    chatBox.scrollHeight;
-
-}
-
-
-/* =========================
-   CLEAR CHAT
-========================= */
-
-hardDeleteBtn.onclick =
-function() {
-
-    chatBox.innerHTML =
-    '<div style="color:#555;text-align:center">Chat Cleared</div>';
-
-};
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
