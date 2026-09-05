@@ -1,0 +1,25 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button = document.getElementById("createIdBtn");
+
+    button.onclick = function () {
+
+        const input =
+            document.getElementById("registerId");
+
+        const id =
+            input.value.trim();
+
+        if (id.length < 3) {
+            alert("Kam se kam 3 characters ki ID dalo");
+            return;
+        }
+
+        localStorage.setItem("pgn_user_id", id);
+
+        alert("ID Created: " + id);
+
+        location.reload();
+    };
+
+});
