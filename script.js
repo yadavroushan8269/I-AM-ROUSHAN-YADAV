@@ -1,188 +1,115 @@
-let balance =
-  Number(localStorage.getItem("nsgBalance"));
+let currentPage = "authPage";
 
-if (!balance) {
-  balance = 50;
-  localStorage.setItem("nsgBalance", balance);
-}
+function showPage(pageId) {
 
-let totalRecharge =
-  Number(localStorage.getItem("nsgTotalRecharge"));
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
 
-if (!totalRecharge) {
-  totalRecharge = 50;
-  localStorage.setItem(
-    "nsgTotalRecharge",
-    totalRecharge
-  );
-}
+  const page = document.getElementById(pageId);
 
-let totalWithdraw =
-  Number(localStorage.getItem("nsgTotalWithdraw")) || 0;
+  if (page) {
+    page.classList.add("active");
+    currentPage = pageId;
+  }
 
-let userId =
-  localStorage.getItem("nsgUserId");
+  const nav = document.getElementById("bottomNav");
 
-if (!userId) {
+  if (pageId === "authPage") {
+    nav.style.display = "none";
+  } else {
+    nav.style.display = "flex";
+  }
 
-  userId =
-    Math.floor(
-      100000000 + Math.random() * 900000000
-    );
-
-  localStorage.setItem(
-    "nsgUserId",
-    userId
-  );
-}
-
-document.getElementById("userId")
-  .textContent = userId;
-
-function update(){
-
-  document.getElementById("recharge")
-    .textContent =
-    "₹" + balance.toFixed(2);
-
-  document.getElementById("withdraw")
-    .textContent =
-    "₹" + balance.toFixed(2);
-
-  document.getElementById("totalRecharge")
-    .textContent =
-    "₹" + totalRecharge.toFixed(2);
-
-  document.getElementById("totalWithdraw")
-    .textContent =
-    "₹" + totalWithdraw.toFixed(2);
-
-  localStorage.setItem(
-    "nsgBalance",
-    balance
-  );
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 
-function virtualDeposit(){
-
-  let amount =
-    prompt(
-      "Enter virtual coins to add:"
-    );
-
-  amount = Number(amount);
-
-  if(!amount || amount <= 0)
-    return;
-
-  balance += amount;
-  totalRecharge += amount;
-
-  localStorage.setItem(
-    "nsgTotalRecharge",
-    totalRecharge
-  );
-
-  update();
-
-  alert(
-    "Virtual balance added successfully."
-  );
+function showLogin() {
+  showToast("Login is available in this demo UI.");
 }
 
 
-function virtualWithdraw(){
+function registerDemo() {
 
-  let amount =
-    Number(
-      prompt(
-        "Enter virtual coins to withdraw:"
-      )
-    );
+  const phone = document.getElementById("phone").value.trim();
 
-  if(!amount || amount <= 0)
-    return;
-
-  if(amount > balance){
-
-    alert(
-      "Insufficient virtual balance."
-    );
-
+  if (!phone) {
+    showToast("Please enter a demo phone number.");
     return;
   }
 
-  balance -= amount;
-  totalWithdraw += amount;
+  showToast("Demo registration successful.");
 
-  localStorage.setItem(
-    "nsgTotalWithdraw",
-    totalWithdraw
-  );
-
-  update();
-
-  alert(
-    "Virtual withdrawal recorded."
-  );
+  setTimeout(() => {
+    showPage("homePage");
+  }, 700);
 }
 
 
-function invite(){
+function togglePassword() {
 
-  alert(
-    "Your referral ID: " + userId
-  );
+  const password = document.getElementById("password");
+
+  if (password.type === "password") {
+    password.type = "text";
+  } else {
+    password.type = "password";
+  }
 }
 
 
-function plans(){
-
-  alert(
-    "No investment plans are active in this prototype."
-  );
+function openProducts() {
+  showPage("homePage");
+  showToast("Products opened.");
 }
 
 
-function bank(){
-
-  alert(
-    "Bank-account management is disabled in this prototype."
-  );
+function demoAction(action) {
+  showToast(action + " — demo only.");
 }
 
 
-function commission(){
+function showToast(message) {
 
-  alert(
-    "Commission history is empty."
-  );
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
 }
 
 
-function invest(){
+/* LOGIN TAB */
 
-  alert(
-    "Investment section — virtual prototype."
-  );
-}
+document.getElementById("loginTab").addEventListener("click", function () {
 
+  document.getElementById("loginTab").classList.add("selected");
+  document.getElementById("registerTab").classList.remove("selected");
 
-function team(){
-
-  alert(
-    "Team section — virtual prototype."
-  );
-}
+  showToast("Login mode — demo only.");
+});
 
 
-function profile(){
+/* REGISTER TAB */
 
-  alert(
-    "Player ID: " + userId
-  );
-}
+document.getElementById("registerTab").addEventListener("click", function () {
+
+  document.getElementById("registerTab").classList.add("selected");
+  document.getElementById("loginTab").classList.remove("selected");
+
+  showToast("Register mode.");
+});
 
 
-update();
+/* START */
+
+showPage("authPage");
