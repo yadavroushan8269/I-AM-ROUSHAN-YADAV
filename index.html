@@ -1,101 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>NSG Power Bank</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drone Investment - Demo</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="app">
+<div id="app">
 
-<header>Power Bank</header>
+  <!-- LOGIN / REGISTER -->
+  <section id="authPage" class="page active">
 
-<section class="hero">
+    <div class="logo">DJI</div>
+    <div class="demo-badge">DEMO WEBSITE</div>
 
-  <div class="profile">
-    <div class="avatar">₮</div>
-    <div>
-      <b>ID:<span id="userId"></span></b>
-      <small>Welcome back</small>
+    <div class="auth-tabs">
+      <button id="loginTab">Login</button>
+      <button id="registerTab" class="selected">Register</button>
     </div>
-  </div>
 
-  <div class="actions">
-    <button onclick="virtualDeposit()">Deposit</button>
-    <button onclick="virtualWithdraw()">Withdraw</button>
-  </div>
+    <div class="auth-box">
 
-</section>
+      <div class="input-box">
+        <span>📞</span>
+        <input id="phone" type="text" placeholder="Phone number">
+      </div>
 
-<section class="stats">
+      <div class="input-box">
+        <span>🔒</span>
+        <input id="password" type="password" placeholder="Please enter password">
+        <span onclick="togglePassword()">👁</span>
+      </div>
 
-  <div>
-    <strong id="recharge">₹50.00</strong>
-    <span>Recharge Balance</span>
-  </div>
+      <div class="input-box">
+        <span>🛡️</span>
+        <input id="withdrawPassword" type="password"
+               placeholder="Please enter withdrawal password">
+      </div>
 
-  <div>
-    <strong id="withdraw">₹0.00</strong>
-    <span>Withdrawal Balance</span>
-  </div>
+      <div class="input-box">
+        <span>👥</span>
+        <input id="inviteCode" type="text"
+               placeholder="Invitation code">
+      </div>
 
-  <div>
-    <strong id="totalRecharge">₹50.00</strong>
-    <span>Total Recharge</span>
-  </div>
+      <button class="primary-btn" onclick="registerDemo()">
+        REGISTER
+      </button>
 
-  <div>
-    <strong id="totalWithdraw">₹0.00</strong>
-    <span>Total Withdraw</span>
-  </div>
+      <p class="account-text">
+        Already have an account?
+        <span onclick="showLogin()">Log in</span>
+      </p>
 
-</section>
+    </div>
+  </section>
 
-<div class="promo">
-  <div class="coins">🪙 🪙</div>
-  <b>Promo</b>
+
+  <!-- HOME -->
+  <section id="homePage" class="page">
+
+    <header class="top-header">
+      <div>
+        <b>Welcome</b>
+        <small>Demo Account</small>
+      </div>
+      <div class="avatar">👤</div>
+    </header>
+
+    <div class="banner">
+      <div>
+        <small>PREMIUM DRONE</small>
+        <h2>MAVIC 3 CLASSIC</h2>
+        <p>Professional aerial technology</p>
+      </div>
+      <div class="drone">🚁</div>
+    </div>
+
+    <div class="quick-menu">
+
+      <button onclick="demoAction('Deposit')">
+        <span>💰</span>
+        <small>Deposit</small>
+      </button>
+
+      <button onclick="demoAction('Withdraw')">
+        <span>💳</span>
+        <small>Withdraw</small>
+      </button>
+
+      <button onclick="demoAction('Gift Bonus')">
+        <span>🎁</span>
+        <small>Gift Bonus</small>
+      </button>
+
+      <button onclick="openProducts()">
+        <span>📦</span>
+        <small>Product</small>
+      </button>
+
+      <button onclick="demoAction('Online Service')">
+        <span>💬</span>
+        <small>Online</small>
+      </button>
+
+    </div>
+
+    <div class="category-tabs">
+      <button class="active-cat">Energy Storage</button>
+      <button>Ultra High Voltage</button>
+    </div>
+
+    <div class="products">
+
+      <div class="product-card">
+        <div class="product-image drone-img">🚁</div>
+        <h3>DJI 1</h3>
+        <p>Price <b>₹3,000</b></p>
+        <p>Daily <b>₹500</b></p>
+        <p>Days <b>50</b></p>
+        <p>Total <b>₹25,000</b></p>
+        <button onclick="demoAction('Invest - DJI 1')">
+          INVEST
+        </button>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image drone-img">🚁</div>
+        <h3>DJI 2</h3>
+        <p>Price <b>₹6,000</b></p>
+        <p>Daily <b>₹1,000</b></p>
+        <p>Days <b>50</b></p>
+        <p>Total <b>₹50,000</b></p>
+        <button onclick="demoAction('Invest - DJI 2')">
+          INVEST
+        </button>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image drone-img">🚁</div>
+        <h3>DJI 5</h3>
+        <p>Price <b>₹96,000</b></p>
+        <p>Daily <b>₹16,000</b></p>
+        <p>Days <b>50</b></p>
+        <p>Total <b>₹8,00,000</b></p>
+        <button class="soon">SOON</button>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image drone-img">🚁</div>
+        <h3>DJI 6</h3>
+        <p>Price <b>₹1,92,000</b></p>
+        <p>Daily <b>₹32,000</b></p>
+        <p>Days <b>50</b></p>
+        <p>Total <b>₹16,00,000</b></p>
+        <button class="soon">SOON</button>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- TEAM -->
+  <section id="teamPage" class="page">
+
+    <header class="inner-header">
+      <span onclick="showPage('homePage')">‹</span>
+      <h2>Team Information</h2>
+    </header>
+
+    <div class="commission-box">
+      <p>Product Purchase Commission Rates</p>
+      <strong>20.00% - 2.00% - 1.00%</strong>
+    </div>
+
+    <div class="stats-box">
+      <div>
+        <strong>3</strong>
+        <small>Total Members</small>
+      </div>
+
+      <div>
+        <strong>3</strong>
+        <small>Valid Members</small>
+      </div>
+
+      <button>Copy Link</button>
+      <button>Copy Code</button>
+    </div>
+
+    <div class="team-box">
+      <h2>Team Structure</h2>
+
+      <div class="level">
+        <div>
+          <b>Level 01</b>
+          <span>20.00% Commission</span>
+        </div>
+
+        <p>Valid: 1 / 1</p>
+        <p>Deposit: ₹0</p>
+
+        <button onclick="demoAction('Level 1 Members')">
+          View Level 1 Members
+        </button>
+      </div>
+
+      <div class="level">
+        <div>
+          <b>Level 02</b>
+          <span>2.00% Commission</span>
+        </div>
+
+        <p>Valid: 1 / 1</p>
+        <p>Deposit: ₹0</p>
+
+        <button onclick="demoAction('Level 2 Members')">
+          View Level 2 Members
+        </button>
+      </div>
+
+      <div class="level">
+        <div>
+          <b>Level 03</b>
+          <span>1.00% Commission</span>
+        </div>
+
+        <p>Valid: 1 / 1</p>
+        <p>Deposit: ₹0</p>
+
+        <button onclick="demoAction('Level 3 Members')">
+          View Level 3 Members
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- MINE -->
+  <section id="minePage" class="page">
+
+    <header class="mine-header">
+      <div class="big-avatar">👤</div>
+      <div>
+        <h2>ID: DEMO123456</h2>
+        <span>VIP Member — Demo</span>
+      </div>
+    </header>
+
+    <div class="balance-card">
+
+      <div>
+        <small>BALANCE</small>
+        <strong>₹1,759</strong>
+      </div>
+
+      <div>
+        <small>PRODUCT</small>
+        <strong>1</strong>
+      </div>
+
+      <div>
+        <small>PROFIT</small>
+        <strong>₹108</strong>
+      </div>
+
+    </div>
+
+    <div class="mine-menu">
+
+      <button onclick="demoAction('Recharge Wallet')">
+        <span>💰</span>
+        <label>Recharge Wallet</label>
+        <b>›</b>
+      </button>
+
+      <button onclick="demoAction('Transaction History')">
+        <span>📊</span>
+        <label>Transaction History</label>
+        <b>›</b>
+      </button>
+
+      <button onclick="demoAction('Bank Information')">
+        <span>⚙️</span>
+        <label>Bank Information</label>
+        <b>›</b>
+      </button>
+
+      <button onclick="demoAction('Account Settings')">
+        <span>👤</span>
+        <label>Account Settings</label>
+        <b>›</b>
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav id="bottomNav">
+
+    <button onclick="showPage('homePage')">
+      <span>⌂</span>
+      Home
+    </button>
+
+    <button onclick="demoAction('Invite')">
+      <span>♧</span>
+      Invite
+    </button>
+
+    <button onclick="showPage('teamPage')">
+      <span>♙</span>
+      Team
+    </button>
+
+    <button onclick="showPage('minePage')">
+      <span>♙</span>
+      Mine
+    </button>
+
+  </nav>
+
 </div>
 
-<section class="menu-list">
-
-  <button onclick="invite()">
-    <i>✉️</i>
-    <span>Invite Friends</span>
-    <b>›</b>
-  </button>
-
-  <button onclick="plans()">
-    <i>📋</i>
-    <span>Plan Record</span>
-    <b>›</b>
-  </button>
-
-  <button onclick="bank()">
-    <i>🏦</i>
-    <span>Bank Account</span>
-    <b>›</b>
-  </button>
-
-  <button onclick="commission()">
-    <i>📋</i>
-    <span>My Commission History</span>
-    <b>›</b>
-  </button>
-
-</section>
-
-<nav>
-  <button class="active">⌂<small>Home</small></button>
-  <button onclick="invest()">¥<small>Invest</small></button>
-  <button class="center" onclick="virtualDeposit()">＋</button>
-  <button onclick="team()">♟<small>My team</small></button>
-  <button onclick="profile()">♙<small>Profile</small></button>
-</nav>
-
-</div>
+<div id="toast"></div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
