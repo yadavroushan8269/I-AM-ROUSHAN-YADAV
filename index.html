@@ -1,255 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PGN Secure Bridge</title>
-
-  <link rel="stylesheet" href="style.css">
-
-  <!-- PeerJS -->
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NSG Power Bank</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="app">
 
-  <!-- REGISTER -->
-  <section id="registerScreen" class="card register-card">
-
-    <div class="logo">P</div>
-
-    <h1>PGN Secure Bridge</h1>
-
-    <p class="subtitle">
-      Create your permanent personal ID
-    </p>
-
-    <input
-      id="registerId"
-      type="text"
-      placeholder="Example: roshan99"
-      maxlength="30"
-    >
-
-    <button id="createIdBtn" class="primary">
-      Create Permanent ID
-    </button>
-
-    <p class="small">
-      Your ID is stored on this device.
-    </p>
-
-  </section>
-
-
-  <!-- MAIN -->
-  <section id="mainScreen" class="hidden">
-
-    <header class="topbar">
-
-      <div>
-        <div class="brand">PGN Secure Bridge</div>
-        <div class="online">
-          <span></span> Node Online
-        </div>
-      </div>
-
-      <div class="profile">
-        <div id="profileLetter">R</div>
-        <span id="profileName">User</span>
-      </div>
-
-    </header>
-
-
-    <div class="card">
-
-      <!-- ID -->
-      <div class="my-id-box">
-        <span>Your Permanent ID</span>
-
-        <strong id="myId">Loading...</strong>
-
-        <button id="copyIdBtn">
-          Copy
-        </button>
-      </div>
-
-
-      <!-- CONTACT -->
-      <h3>Connect User</h3>
-
-      <div class="connect-row">
-
-        <input
-          id="remoteId"
-          type="text"
-          placeholder="Enter User ID"
-        >
-
-        <button id="connectBtn" class="primary">
-          Connect
-        </button>
-
-      </div>
-
-
-      <!-- CALL BUTTONS -->
-      <div class="call-buttons">
-
-        <button id="videoCallBtn" class="video">
-          📹 Video Call
-        </button>
-
-        <button id="audioCallBtn" class="audio">
-          📞 Audio Call
-        </button>
-
-        <button id="hangupBtn" class="danger">
-          ✕ Hang Up
-        </button>
-
-      </div>
-
-
-      <!-- VIDEOS -->
-      <div class="videos">
-
-        <div class="video-card">
-
-          <span>YOU</span>
-
-          <video
-            id="localVideo"
-            autoplay
-            muted
-            playsinline>
-          </video>
-
-        </div>
-
-        <div class="video-card">
-
-          <span>REMOTE</span>
-
-          <video
-            id="remoteVideo"
-            autoplay
-            playsinline>
-          </video>
-
-        </div>
-
-      </div>
-
-
-      <div id="callStatus" class="call-status">
-        Ready to connect
-      </div>
-
-
-      <!-- CHAT -->
-      <div class="section-title">
-
-        <h3>Direct P2P Vault</h3>
-
-        <button id="clearChatBtn" class="clear">
-          Clear
-        </button>
-
-      </div>
-
-
-      <div id="chatBox" class="chat-box">
-
-        <div class="empty">
-          Secure P2P Chat Stream
-        </div>
-
-      </div>
-
-
-      <div class="message-row">
-
-        <input
-          id="messageInput"
-          type="text"
-          placeholder="Type message..."
-        >
-
-        <button id="sendBtn" class="send">
-          Send
-        </button>
-
-      </div>
-
-
-      <!-- MEDIA -->
-      <div class="media">
-
-        <h3>Send Photo / Video / File</h3>
-
-        <input
-          id="fileInput"
-          type="file"
-        >
-
-        <button id="sendFileBtn" class="media-btn">
-          Send File
-        </button>
-
-      </div>
-
-
-      <!-- SETTINGS -->
-      <div class="settings">
-
-        <button id="changeIdBtn">
-          Change ID
-        </button>
-
-      </div>
-
+<header>Power Bank</header>
+
+<section class="hero">
+
+  <div class="profile">
+    <div class="avatar">₮</div>
+    <div>
+      <b>ID:<span id="userId"></span></b>
+      <small>Welcome back</small>
     </div>
-
-  </section>
-
-</div>
-
-
-<!-- INCOMING CALL -->
-<div id="incomingModal" class="modal hidden">
-
-  <div class="modal-box">
-
-    <div class="call-icon">📞</div>
-
-    <h2>Incoming Call</h2>
-
-    <p id="callerName">Someone is calling...</p>
-
-    <div class="modal-buttons">
-
-      <button id="acceptCallBtn" class="accept">
-        Accept
-      </button>
-
-      <button id="rejectCallBtn" class="reject">
-        Reject
-      </button>
-
-    </div>
-
   </div>
 
+  <div class="actions">
+    <button onclick="virtualDeposit()">Deposit</button>
+    <button onclick="virtualWithdraw()">Withdraw</button>
+  </div>
+
+</section>
+
+<section class="stats">
+
+  <div>
+    <strong id="recharge">₹50.00</strong>
+    <span>Recharge Balance</span>
+  </div>
+
+  <div>
+    <strong id="withdraw">₹0.00</strong>
+    <span>Withdrawal Balance</span>
+  </div>
+
+  <div>
+    <strong id="totalRecharge">₹50.00</strong>
+    <span>Total Recharge</span>
+  </div>
+
+  <div>
+    <strong id="totalWithdraw">₹0.00</strong>
+    <span>Total Withdraw</span>
+  </div>
+
+</section>
+
+<div class="promo">
+  <div class="coins">🪙 🪙</div>
+  <b>Promo</b>
 </div>
 
+<section class="menu-list">
+
+  <button onclick="invite()">
+    <i>✉️</i>
+    <span>Invite Friends</span>
+    <b>›</b>
+  </button>
+
+  <button onclick="plans()">
+    <i>📋</i>
+    <span>Plan Record</span>
+    <b>›</b>
+  </button>
+
+  <button onclick="bank()">
+    <i>🏦</i>
+    <span>Bank Account</span>
+    <b>›</b>
+  </button>
+
+  <button onclick="commission()">
+    <i>📋</i>
+    <span>My Commission History</span>
+    <b>›</b>
+  </button>
+
+</section>
+
+<nav>
+  <button class="active">⌂<small>Home</small></button>
+  <button onclick="invest()">¥<small>Invest</small></button>
+  <button class="center" onclick="virtualDeposit()">＋</button>
+  <button onclick="team()">♟<small>My team</small></button>
+  <button onclick="profile()">♙<small>Profile</small></button>
+</nav>
+
+</div>
 
 <script src="script.js"></script>
-<script src="./script.js"></script>
-</body>
-</html>
 </body>
 </html>
